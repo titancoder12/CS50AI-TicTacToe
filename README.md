@@ -4,7 +4,7 @@
 
 ### Discription
 
-<p>This program which uses MiniMax AI to play Tic-Tac-Toe optimally.</p>
+<p>This program uses MiniMax AI to play Tic-Tac-Toe optimally.</p>
 
 ### Specifications
 
