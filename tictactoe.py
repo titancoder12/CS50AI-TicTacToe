@@ -26,11 +26,11 @@ def player(board):
     X_count = 0
     O_count = 0
     i_count = 0
-    for i in board:
-        for j in board[i_count]:
-            if j == X:
+    for i in range(3):
+        for j in range(3):
+            if board[i][j] == X:
                 X_count+=1
-            elif j == O:
+            elif board[i][j] == O:
                 O_count+=1
         i_count += 1
     if X_count == O_count:
@@ -48,15 +48,12 @@ def actions(board):
     Returns set of all possible actions (i, j) available on the board.
     """
     actions_set = set()
-    i_count = 0
-    j_count = 0
     for i in range(3):
         for j in range(3):
-            if j == EMPTY:
-                actions_set.add((i_count, j_count))
-            j_count += 1
-        i_count += 1
-    print(actions_set)
+            if board[i][j] == EMPTY:
+                actions_set.update([(i, j)])
+    print("Actions:")
+    print(actions_set, end="\n\n")
     return actions_set
 
 def result(board, action):    
@@ -84,15 +81,15 @@ def winner(board):
             return O
         
         for j in range(i_count):
-            if board[0][j] and board[1][j] and board[2][j] == X:
+            if (board[0][j] == X) and (board[1][j] == X) and (board[2][j] == X):
                 return X
-            elif board[0][j] and board[1][j] and board[2][j] == O:
+            elif (board[0][j] == O) and (board[1][j] == O) and (board[2][j] == O):
                 return O
 
-        if board[0][0] and board [1][1] and board[2][2] == X:
+        if (board[0][0] == X) and (board[1][1] == X) and (board[2][2] == X):
             return X
         
-        if board[0][0] and board [1][1] and board[2][2] == O:
+        if (board[0][0]) == O and (board[1][1] == O) and (board[2][2] == O):
             return O
 
         i_count += 1
@@ -134,48 +131,60 @@ def utility(board):
         return -1
     return 0
 
-
 def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
+    # print(board)
     choices = []
     for action in actions(board):
         if terminal(result(board, action)):
-            if winner(action) == X:
-                return (1, action)
-            elif winner(action) == O:
-                return (-1, action)
-            else:
-                return (0, action)
+            #print(action)
+            #print(winner(action))
+            if winner(board) == X:
+                return action
+            elif winner(board) == O:
+                return action
+            elif winner(board) == None:
+                return action
         else:
-            choice = (minimax(result(board, action))[0], minimax(result(board, action))[1])
+            choice = minimax(result(board, action))
             choices.append(choice)
+        print("choice:")
+        print(choice)
     min_list = []
     max_list = []
-    min_num = 1000
-    max_num = -1000
+    min_num = -10000
+    max_num = 10000
+    min_choice = []
+    max_choice = []
     for choice in choices:
-        print(choice)
-        if choice[0] < min_num:
-            print("reached case 1")
-            min_num = choice[0]
-            min_list.clear()
-            min_list.append(min_num)
-            min_list.append(choice[1])
+        utility_num = utility(result(board, choice))
+        print("Choices:")
+        print(choices)
+        if utility_num < min_num:
+            print("Reached case 1")
+            utility_num = min_num
+            min_choice[1] = list(choice)[1]
+            min_choice[2] = list(choice)[2]
         
-        if choice[0] > max_num:
+        if utility_num > max_num:
             print("Reached case 2")
-            max_num = choice[0]
-            max_list.clear()
-            max_list.append(max_num)
-            max_list.append(choice[1])
+            utility_num = max_num
+            max_choice[1] = list(choice)[1]
+            max_choice[2] = list(choice)[2]
+    
+    if terminal(board):
+        return None
     
     if player(board) == X:
+        print("max_list:")
         print(max_list)
-        return max_list[1]
+        return tuple(max_choice)
     elif player(board) == O:
+        print("min_list:")
         print(min_list)
-        return min_list[1]
+        return tuple(min_choice)
+        #min_list[1]
     else:
         return None
