@@ -64,7 +64,7 @@ def result(board, action):
     j= action[1]
     print("I:"+str(i) + " J:"+str(j))
     board_copy = copy.deepcopy(board)
-    #print(board_copy)
+    print(player(board))
     board_copy[i][j] = player(board)
     return board_copy
 
@@ -86,7 +86,7 @@ def winner(board):
             elif (board[0][j] == O) and (board[1][j] == O) and (board[2][j] == O):
                 return O
 
-        if (board[0][0] == X) and (board[1][1] == X) and (board[2][2] == X):
+        if ((board[0][0] == X) and (board[1][1] == X) and (board[2][2] == X)) or ((board[0][2] == X) and (board[1][1] == X) and (board[2][0] == X)):
             return X
         
         if (board[0][0]) == O and (board[1][1] == O) and (board[2][2] == O):
@@ -112,10 +112,13 @@ def terminal(board):
         for j in range(3):
             #print(j)
             #print(board[0][j])
-            if (board[0][j] and board[1][j] and board[2][j]) == (X or O):
+            if (board[0][j]==(X or O)) and (board[1][j]==(X or O)) and (board[2][j]==(X or O)):
                 return True
 
-        if (board[0][0] and board [1][1] and board[2][2]) == (X or O):
+        if (board[0][0]==(X or O)) and (board[1][1]==(X or O)) and (board[2][2]==(X or O)):
+            return True
+        
+        if (board[0][2]==(X or O)) and (board[1][1]==(X or O)) and (board[2][0]==(X or O)):
             return True
 
         i_count+=1
@@ -136,16 +139,11 @@ def minimax(board):
     Returns the optimal action for the current player on the board.
     """
     # print(board)
+    if terminal(board):
+        return None
     choices = []
     for action in actions(board):
         if terminal(result(board, action)):
-            #print(action)
-            #print(winner(action))
-            if winner(board) == X:
-                return action
-            elif winner(board) == O:
-                return action
-            elif winner(board) == None:
                 return action
         else:
             choice = minimax(result(board, action))
@@ -162,20 +160,18 @@ def minimax(board):
         utility_num = utility(result(board, choice))
         print("Choices:")
         print(choices)
-        if utility_num < min_num:
-            print("Reached case 1")
-            utility_num = min_num
-            min_choice[1] = list(choice)[1]
-            min_choice[2] = list(choice)[2]
+        if utility_num == -1:
+            print("O win")
+            
         
-        if utility_num > max_num:
-            print("Reached case 2")
+        if utility_num == 1:
+            print("X win")
             utility_num = max_num
             max_choice[1] = list(choice)[1]
             max_choice[2] = list(choice)[2]
-    
-    if terminal(board):
-        return None
+        
+        if utility_num == 0:
+            print("Tie")
     
     if player(board) == X:
         print("max_list:")
@@ -188,3 +184,5 @@ def minimax(board):
         #min_list[1]
     else:
         return None
+
+#print(result((1, 1), [[EMPTY, EMPTY, EMPTY],[EMPTY, EMPTY, EMPTY],[EMPTY, EMPTY, EMPTY]]))
