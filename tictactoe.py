@@ -35,9 +35,9 @@ def player(board):
         i_count += 1
     if X_count == O_count:
         return X
-    elif X_count > O_count:
-        return X
     elif X_count < O_count:
+        return X
+    elif X_count > O_count:
         return O
     else:
         raise TypeError
@@ -52,8 +52,8 @@ def actions(board):
         for j in range(3):
             if board[i][j] == EMPTY:
                 actions_set.update([(i, j)])
-    print("Actions:")
-    print(actions_set, end="\n\n")
+    #print("Actions:")
+    #print(actions_set, end="\n\n")
     return actions_set
 
 def result(board, action):    
@@ -62,10 +62,15 @@ def result(board, action):
     """
     i = action[0]
     j= action[1]
-    print("I:"+str(i) + " J:"+str(j))
+    #print("I:"+str(i) + " J:"+str(j))
     board_copy = copy.deepcopy(board)
-    print(player(board))
+    #print(player(board))
+    if board_copy[i][j] != None:
+        raise Exception("Move is not legal; spot has been occupied")
     board_copy[i][j] = player(board)
+    #print(board)
+    i = 0
+    j = 0
     return board_copy
 
 
@@ -108,10 +113,10 @@ def terminal(board):
             return True
         elif i == [O, O, O]:
             return True
-        # print(len(board[i_count]))
+        # #print(len(board[i_count]))
         for j in range(3):
-            #print(j)
-            #print(board[0][j])
+            ##print(j)
+            ##print(board[0][j])
             if (board[0][j]==(X or O)) and (board[1][j]==(X or O)) and (board[2][j]==(X or O)):
                 return True
 
@@ -134,55 +139,56 @@ def utility(board):
         return -1
     return 0
 
-def minimax(board):
+def minimax(board, caller="notself"):
     """
     Returns the optimal action for the current player on the board.
     """
-    # print(board)
+    choices = []
+    # #print(board)
     if terminal(board):
         return None
-    choices = []
-    for action in actions(board):
-        if terminal(result(board, action)):
-                return action
-        else:
-            choice = minimax(result(board, action))
-            choices.append(choice)
-        print("choice:")
-        print(choice)
-    min_list = []
-    max_list = []
-    min_num = -10000
-    max_num = 10000
-    min_choice = []
-    max_choice = []
-    for choice in choices:
-        utility_num = utility(result(board, choice))
-        print("Choices:")
-        print(choices)
-        if utility_num == -1:
-            print("O win")
-            
-        
-        if utility_num == 1:
-            print("X win")
-            utility_num = max_num
-            max_choice[1] = list(choice)[1]
-            max_choice[2] = list(choice)[2]
-        
-        if utility_num == 0:
-            print("Tie")
-    
-    if player(board) == X:
-        print("max_list:")
-        print(max_list)
-        return tuple(max_choice)
-    elif player(board) == O:
-        print("min_list:")
-        print(min_list)
-        return tuple(min_choice)
-        #min_list[1]
-    else:
-        return None
 
-#print(result((1, 1), [[EMPTY, EMPTY, EMPTY],[EMPTY, EMPTY, EMPTY],[EMPTY, EMPTY, EMPTY]]))
+    # Loop over actions
+    for action in actions(board):
+        # Check action leads to terminal board
+        # Make sure the caller is self, so as not to return the wrong value
+        if terminal(result(board, action)):
+            print(f"utility:{utility(result(board, action))}")
+            return utility(result(board, action))
+        else:
+            # Recursive programming
+            utility_num = minimax(result(board, action))
+            print(f"utility num: {utility_num}")
+            # Create dict to add to list later on
+            choices_dict = {}
+            # Assign utility number to action
+            choices_dict[utility_num] = action
+            # Add dict to list
+            choices.append(choices_dict) 
+        # #print out possible choices
+        #print(f"\n Choices: {choices_dict} \n")
+
+    for i in range(len(choices)):
+        print(choices)
+        if player(board) == X:
+            if choices[i].get(1) != None:
+                #print(f"ideal: {choices[i][1]}")
+                return choices[i][1]
+            elif choices[i].get(0) != None:
+                #print(f"ideal: {choices[i][0]}")
+                return choices[i][0]
+            elif choices[i].get(-1) != None:
+                #print(f"ideal: {choices[i][-1]}")
+                return choices[i][-1]
+    
+        if player(board) == O:
+            if choices[i].get(-1) != None:
+                #print(f"ideal: {choices[i][-1]}")
+                return choices[i][-1]
+            elif choices[i].get(0) != None:
+                #print(f"ideal: {choices[i][0]}")
+                return choices[i][0]
+            elif choices[i].get(1) != None:
+                #print(f"ideal: {choices[i][1]}")
+                return choices[i][1]
+    return None
