@@ -145,8 +145,8 @@ def minimax(board, caller="notself"):
     """
     choices = []
     # #print(board)
-    if terminal(board):
-        return None
+    #if terminal(board):
+    #    return None
 
     # Loop over actions
     for action in actions(board):
