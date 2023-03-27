@@ -62,7 +62,7 @@ def result(board, action):
     """
     i = action[0]
     j= action[1]
-    #print("I:"+str(i) + " J:"+str(j))
+    print("I:"+str(i) + " J:"+str(j))
     board_copy = copy.deepcopy(board)
     #print(player(board))
     if board_copy[i][j] != None:
@@ -117,13 +117,28 @@ def terminal(board):
         for j in range(3):
             ##print(j)
             ##print(board[0][j])
-            if (board[0][j]==(X or O)) and (board[1][j]==(X or O)) and (board[2][j]==(X or O)):
+            if (board[0][j]==(X)) and (board[1][j]==(X)) and (board[2][j]==(X)):
+                return True
+            
+            if (board[0][j]==(O)) and (board[1][j]==(O)) and (board[2][j]==(O)):
+                return True
+            
+            if (board[j][0] == X) and (board[j][1] == X) and (board[j][2] == X):
+                return True
+            
+            if (board[j][0] == O) and (board[j][1] == O) and (board[j][2] == O):
                 return True
 
-        if (board[0][0]==(X or O)) and (board[1][1]==(X or O)) and (board[2][2]==(X or O)):
+        if (board[0][0]==X) and (board[1][1]==X) and (board[2][2]==X):
             return True
         
-        if (board[0][2]==(X or O)) and (board[1][1]==(X or O)) and (board[2][0]==(X or O)):
+        if (board[0][0]==O) and (board[1][1]==O) and (board[2][2]==O):
+            return True
+        
+        if (board[0][2]==(X)) and (board[1][1]==(X)) and (board[2][0]==(X)):
+            return True
+        
+        if (board[0][2]==(O)) and (board[1][1]==(O)) and (board[2][0]==(O)):
             return True
 
         i_count+=1
@@ -139,30 +154,35 @@ def utility(board):
         return -1
     return 0
 
-def minimax(board, caller="notself"):
+call = 0
+def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
     choices = []
     # #print(board)
-    #if terminal(board):
-    #    return None
+    if terminal(board):
+        return None
 
     # Loop over actions
     for action in actions(board):
         # Check action leads to terminal board
         # Make sure the caller is self, so as not to return the wrong value
         if terminal(result(board, action)):
-            print(f"utility:{utility(result(board, action))}")
+            #print(result(board, action))
             return utility(result(board, action))
         else:
             # Recursive programming
             utility_num = minimax(result(board, action))
-            print(f"utility num: {utility_num}")
+            #print(f"utility num: {utility_num}")
+            #global call
+            #call = call + 100000
+            #print(call)
             # Create dict to add to list later on
-            choices_dict = {}
             # Assign utility number to action
+            choices_dict = {}
             choices_dict[utility_num] = action
+            #print(utility_num)
             # Add dict to list
             choices.append(choices_dict) 
         # #print out possible choices

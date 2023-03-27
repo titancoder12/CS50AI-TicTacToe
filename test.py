@@ -66,7 +66,7 @@ print(f"{utility(Tie_board)} should be 0")
 print("")
 
 # test minimax
-print("minimax:\n---------------------")
-print(f"{minimax(board)}")
-print(f"{minimax(Tie_board)}")
-print(f"{minimax(Random_board)}")
+#print("minimax:\n---------------------")
+#print(f"{minimax(board)}")
+#print(f"{minimax(Tie_board)}")
+#print(f"{minimax(Random_board)}")
