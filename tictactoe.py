@@ -4,7 +4,6 @@ Tic Tac Toe Player
 
 import copy
 import math
-from draft import minimaxdraft
 
 X = "X"
 O = "O"
@@ -61,8 +60,10 @@ def result(board, action):
     """
     Returns the board that results from making move (i, j) on the board.
     """
+    if type(action) != tuple:
+        raise TypeError
     i = action[0]
-    j= action[1]
+    j = action[1]
     print("I:"+str(i) + " J:"+str(j))
     board_copy = copy.deepcopy(board)
     #print(player(board))
@@ -173,23 +174,32 @@ def minimax(board):
             choices_dict[utilitynum] = action
 
             choices.append(choices_dict)
-    
-        for i in range(len(choices)):
-            if player(board) == X:
-                if choices[i].get(1) != None:
-                    return choices[i][1]
-                elif choices[i].get(0) != None:
-                    return choices[i][0]
-                elif choices[i].get(-1) != None:
-                    return choices[i][-1]
-        
-            if player(board) == O:
-                if choices[i].get(-1) != None:
-                    return choices[i][-1]
-                elif choices[i].get(0) != None:
-                    return choices[i][0]
-                elif choices[i].get(1) != None:
-                    return choices[i][1]
-        print(minimax(result(board, action)))
+
+            optimalx = None
+            optimalo = None
+            for i in range(len(choices)):
+                if player(board) == X:
+                    if optimalx == None:
+                        if choices[i].get(1) != None:
+                            return choices[i][1]
+                    if choices[i].get(0) != None:
+                        if utility(result(board, choices[i][0])) > utility(result(board, optimalx)):
+                            optimalx = choices[i][0]
+                    if choices[i].get(-1) != None:
+                        if utility(result(board, choices[i][-1])) > utility(result(board, optimalx)):
+                            optimalx = choices[i][-1]
+                
+                if player(board) == O:
+                    if optimalx == None:
+                        if choices[i].get(-1) != None:
+                            return choices[i][-1]
+                    if choices[i].get(0) != None:
+                        if utility(result(board, choices[i][0])) > utility(result(board, optimalo)):
+                            optimalo = choices[i][0]
+                    if choices[i].get(1) != None:
+                        if utility(result(board, choices[i][1])) > utility(result(board, optimalo)):
+                            optimalo = choices[i][1]
+                
+        #print(minimax(result(board, action)))
         return minimax(result(board, action))
             
