@@ -163,29 +163,27 @@ def minimax(board):
     # #print(board)
     if terminal(board):
         return None
-
+    
     # Loop over actions
     for action in actions(board):
+        if terminal(result(board, action)):
+            return action
         # Check action leads to terminal board
         # Make sure the caller is self, so as not to return the wrong value
-        if terminal(result(board, action)):
-            #print(result(board, action))
-            return utility(result(board, action))
-        else:
-            # Recursive programming
-            utility_num = minimax(result(board, action))
-            #print(f"utility num: {utility_num}")
-            #global call
-            #call = call + 100000
-            #print(call)
-            # Create dict to add to list later on
-            # Assign utility number to action
-            choices_dict = {}
-            choices_dict[utility_num] = action
-            #print(utility_num)
-            # Add dict to list
-            choices.append(choices_dict) 
-        # #print out possible choices
+        # Recursive programming
+        action = minimax(result(board, action))
+        #print(f"utility num: {utility_num}")
+        #             #global call
+        #call = call + 100000
+        #print(call)
+        # Create dict to add to list later on
+        # Assign utility number to action
+        choices_dict = {}
+        choices_dict[utility_num] = action
+        #print(utility_num)
+        # Add dict to list
+        choices.append(choices_dict) 
+    # #print out possible choices
         #print(f"\n Choices: {choices_dict} \n")
 
     for i in range(len(choices)):
