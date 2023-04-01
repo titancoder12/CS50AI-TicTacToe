@@ -4,6 +4,7 @@ Tic Tac Toe Player
 
 import copy
 import math
+from draft import minimaxdraft
 
 X = "X"
 O = "O"
@@ -154,59 +155,41 @@ def utility(board):
         return -1
     return 0
 
-call = 0
 def minimax(board):
-    """
-    Returns the optimal action for the current player on the board.
-    """
     choices = []
-    # #print(board)
-    if terminal(board):
-        return None
-    
-    # Loop over actions
+
     for action in actions(board):
         if terminal(result(board, action)):
-            return action
-        # Check action leads to terminal board
-        # Make sure the caller is self, so as not to return the wrong value
-        # Recursive programming
-        action = minimax(result(board, action))
-        #print(f"utility num: {utility_num}")
-        #             #global call
-        #call = call + 100000
-        #print(call)
-        # Create dict to add to list later on
-        # Assign utility number to action
-        choices_dict = {}
-        choices_dict[utility_num] = action
-        #print(utility_num)
-        # Add dict to list
-        choices.append(choices_dict) 
-    # #print out possible choices
-        #print(f"\n Choices: {choices_dict} \n")
+            utilitynum = utility(result(board, action))
+            if player(board) == X:
+                if utilitynum == 1:
+                    return action
+            
+            if player(board) == O:
+                if utilitynum == -1:
+                    return action
+            
+            choices_dict = {}
+            choices_dict[utilitynum] = action
 
-    for i in range(len(choices)):
-        print(choices)
-        if player(board) == X:
-            if choices[i].get(1) != None:
-                #print(f"ideal: {choices[i][1]}")
-                return choices[i][1]
-            elif choices[i].get(0) != None:
-                #print(f"ideal: {choices[i][0]}")
-                return choices[i][0]
-            elif choices[i].get(-1) != None:
-                #print(f"ideal: {choices[i][-1]}")
-                return choices[i][-1]
+            choices.append(choices_dict)
     
-        if player(board) == O:
-            if choices[i].get(-1) != None:
-                #print(f"ideal: {choices[i][-1]}")
-                return choices[i][-1]
-            elif choices[i].get(0) != None:
-                #print(f"ideal: {choices[i][0]}")
-                return choices[i][0]
-            elif choices[i].get(1) != None:
-                #print(f"ideal: {choices[i][1]}")
-                return choices[i][1]
-    return None
+        for i in range(len(choices)):
+            if player(board) == X:
+                if choices[i].get(1) != None:
+                    return choices[i][1]
+                elif choices[i].get(0) != None:
+                    return choices[i][0]
+                elif choices[i].get(-1) != None:
+                    return choices[i][-1]
+        
+            if player(board) == O:
+                if choices[i].get(-1) != None:
+                    return choices[i][-1]
+                elif choices[i].get(0) != None:
+                    return choices[i][0]
+                elif choices[i].get(1) != None:
+                    return choices[i][1]
+        print(minimax(result(board, action)))
+        return minimax(result(board, action))
+            
