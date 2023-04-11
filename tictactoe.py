@@ -156,50 +156,42 @@ def utility(board):
         return -1
     return 0
 
+#
 def minimax(board):
     choices = []
 
+    optimalx = None
+    optimalo = None
+
     for action in actions(board):
         if terminal(result(board, action)):
+            choicesdict = {}
+            choicesdict[utility(result(board,action))] = action
+            choices.append(choicesdict)
+
             utilitynum = utility(result(board, action))
-            if player(board) == X:
-                if utilitynum == 1:
-                    return action
-            
-            if player(board) == O:
-                if utilitynum == -1:
-                    return action
-            
-            choices_dict = {}
-            choices_dict[utilitynum] = action
-
-            choices.append(choices_dict)
-
-            optimalx = None
-            optimalo = None
-            for i in range(len(choices)):
+            for i in range(choices):
                 if player(board) == X:
-                    if optimalx == None:
-                        if choices[i].get(1) != None:
-                            return choices[i][1]
+                    if utilitynum == 1:
+                        return action
                     if choices[i].get(0) != None:
-                        if utility(result(board, choices[i][0])) > utility(result(board, optimalx)):
-                            optimalx = choices[i][0]
+                                if utility(result(board, choices[i][0])) > utility(result(board, optimalx)):
+                                    optimalx = choices[i][0]
                     if choices[i].get(-1) != None:
                         if utility(result(board, choices[i][-1])) > utility(result(board, optimalx)):
                             optimalx = choices[i][-1]
-                
+
                 if player(board) == O:
-                    if optimalx == None:
-                        if choices[i].get(-1) != None:
-                            return choices[i][-1]
+                    if utilitynum == -1:
+                        return action
                     if choices[i].get(0) != None:
-                        if utility(result(board, choices[i][0])) > utility(result(board, optimalo)):
-                            optimalo = choices[i][0]
+                            if utility(result(board, choices[i][0])) > utility(result(board, optimalo)):
+                                optimalo = choices[i][0]
                     if choices[i].get(1) != None:
                         if utility(result(board, choices[i][1])) > utility(result(board, optimalo)):
                             optimalo = choices[i][1]
-                
-        #print(minimax(result(board, action)))
-        return minimax(result(board, action))
-            
+                if (player(board) == X) and (optimalx != None):
+                    return optimalx
+                if (player(board) == O) and (optimalo != None):
+                    return optimalo
+        return minimax(result(board, action)) 
