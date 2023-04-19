@@ -56,12 +56,10 @@ def actions(board):
     #print(actions_set)
     return actions_set
 
-def result(board, action, caller="caller"):    
+def result(board, action):    
     """
     Returns the board that results from making move (i, j) on the board.
     """
-    if caller != "caller":
-        print(caller)
     #print(action)
     if type(action) != tuple:
         raise TypeError
@@ -161,19 +159,80 @@ def utility(board):
         return -1
     return 0
 
-
+call = 0
 def minimax(board):
+    global call
+    call += 1
+    print(f"call #{call}")
+
     if terminal(board):
         return None
     
-    moves = actions(board)
-    for action in moves:
-        if terminal(result(board, action)):
-            return action
-    for action in moves:
-        if player(board) == X:
-            if utility(result(board, minimax(result(board, action)))) == 1:
-                return action
-        if player(board) == O:
-            if utility(result(board, minimax(result(board, action)))) == -1:
-                return action
+    
+    if actions(board) == set():
+        return None
+    
+    for action in actions(board):
+        
+        # init variables
+        optimalx = None
+        optimalx = None
+        optimalx_util = -1000
+        optimalo = None
+        optimalo_util = 1000
+        skip = False
+        playerX = action
+        playerO = None
+        
+        playerO = minimax(result(board, playerX))
+        if playerO == None:
+            onlyaction = None
+            for action in actions(board):
+                onlyaction = action
+            utility_num = utility(result(board, onlyaction))
+            skip = True
+
+        else:
+            playerX = minimax(result(board, playerO))
+            if playerX == None:
+                onlyaction = None
+                for action in actions(board):
+                    onlyaction = action
+                utility_num = utility(result(board, onlyaction))
+                skip = True
+        #print(skip)
+        if skip == False:
+            while True:
+                playerO = minimax(result(board, playerX))
+                if playerO == None:
+                    onlyaction = None
+                    for action in actions(board):
+                        onlyaction = action
+                    utility_num = utility(result(board, playerX))
+                    break
+
+                playerX = minimax(result(board, playerO))
+                if playerX == None:
+                    onlyaction = None
+                    for action in actions(board):
+                        onlyaction = action
+                    utility_num = utility(result(board, playerO))
+                    break
+
+        #print(utility_num)
+        if player(board) == X and utility_num > optimalx_util:
+            optimalx = action
+            optimalx_util = utility_num
+            #print(action)
+        if player(board) == O and utility_num > optimalo_util:
+            optimalo = action
+            optimalo_util = utility_num
+            #print(action)
+
+    if player(board) == X:
+        return optimalx
+    if player(board) == O:
+        return optimalo
+    
+
+    
